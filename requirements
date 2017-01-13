@@ -1,0 +1,4 @@
+https://github.com/mozilla/geckodriver/releases - geckodriver
+Xvfb (apt/yum)
+xvfbwrapper (python)
+selenium (python)
