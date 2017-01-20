@@ -11,7 +11,7 @@ storagelocation = "/tmp/"
 s3bucket_name = 'home-displayboard'
 
 for line in urllist:
-    splitline = line.split(',')
+    splitline = line.split('|')
     url = splitline[0]
     name = splitline[1].rstrip('\n')
     display = Xvfb(width=1920,height=1200)
@@ -26,9 +26,8 @@ for line in urllist:
     profile.accept_untrusted_certs = True
     profile.set_preference('network.http.phishy-userpass-length', 255)
 
-    url_encoded = urllib.urlencode(url)
-    print "getting " + url_encoded
-    browser.get(url_encoded)
+    print "getting " + url
+    browser.get(url)
     filename = storagelocation+name+".png"
     if browser.save_screenshot(filename):
         print "save success"
