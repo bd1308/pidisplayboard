@@ -1,6 +1,5 @@
 from selenium import webdriver
-from selenium.webdriver.common.alert import Alert
-from selenium.webdriver.support.wait import WebDriverWait
+import urllib
 from xvfbwrapper import Xvfb
 import boto3
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -27,8 +26,9 @@ for line in urllist:
     profile.accept_untrusted_certs = True
     profile.set_preference('network.http.phishy-userpass-length', 255)
 
-
-    browser.get(url)
+    url_encoded = urllib.urlencode(url)
+    print "getting " + url_encoded
+    browser.get(url_encoded)
     filename = storagelocation+name+".png"
     if browser.save_screenshot(filename):
         print "save success"
