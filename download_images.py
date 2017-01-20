@@ -29,7 +29,7 @@ schedule.every(1).minutes.do(heartbeat)
 
 while 1:
     schedule.run_pending()
-    time.sleep(5)
+    time.sleep(1)
 
 
 

@@ -46,5 +46,5 @@ schedule.every(5).minutes.do(job)
 
 while 1:
     schedule.run_pending()
-    time.sleep(5)
+    time.sleep(1)
 
