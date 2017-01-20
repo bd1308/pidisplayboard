@@ -25,7 +25,7 @@ for line in urllist:
     profile.accept_untrusted_certs = True
     profile.set_preference('network.http.phishy-userpass-length', 255)
 
-    driver = webdriver.Firefox(DesiredCapabilities=capabilities, firefox_profile=profile)
+    driver = webdriver.Firefox()
 
     print "getting " + url
     driver.get(url)
