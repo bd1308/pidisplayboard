@@ -1,5 +1,5 @@
 from selenium import webdriver
-import urllib
+from selenium.common.exceptions import NoAlertPresentException
 from xvfbwrapper import Xvfb
 import boto3
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -16,7 +16,6 @@ for line in urllist:
     name = splitline[1].rstrip('\n')
     display = Xvfb(width=1920,height=1200)
     display.start()
-    browser=webdriver.Firefox()
 
     capabilities = DesiredCapabilities.FIREFOX
     capabilities['marionette'] = True
@@ -26,12 +25,21 @@ for line in urllist:
     profile.accept_untrusted_certs = True
     profile.set_preference('network.http.phishy-userpass-length', 255)
 
+    driver = webdriver.Firefox(DesiredCapabilities=capabilities, firefox_profile=profile)
+
     print "getting " + url
-    browser.get(url)
+    driver.get(url)
+    try:
+        alert = driver.switch_to.alert()
+        alert.accept()
+    except NoAlertPresentException:
+        print('No Phishing Warning Popup')
+
+
     filename = storagelocation+name+".png"
-    if browser.save_screenshot(filename):
+    if driver.save_screenshot(filename):
         print "save success"
-    browser.quit()
+    driver.quit()
     #s3 magic
     s3 = boto3.resource('s3')
     data = open(filename, 'rb')
