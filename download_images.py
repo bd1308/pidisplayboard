@@ -7,6 +7,7 @@ fileLocation = '/tmp/'
 
 
 def job():
+    print "[JOB] Running AWS Pi Image Download Job..."
     s3 = boto3.client('s3')
     list = s3.list_objects(Bucket=bucketLocation)['Contents']
 
@@ -19,9 +20,12 @@ def job():
             if not os.path_exists(s3_object):
                 os.makedirs(s3_object)
 
+
+
 schedule.every(10).minutes.do(job)
 
 while 1:
+    print "Idle loop."
     schedule.run_pending()
     time.sleep(1)
 
