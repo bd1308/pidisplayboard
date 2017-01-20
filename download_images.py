@@ -1,13 +1,14 @@
 import boto3
 import schedule
 import time
+import logging
 bucketLocation = 'home-displayboard'
 fileLocation = '/tmp/'
 
 
 
 def job():
-    print "[JOB] Running AWS Pi Image Download Job..."
+    logging.info("[JOB] Running AWS Pi Image Download Job...")
     s3 = boto3.client('s3')
     list = s3.list_objects(Bucket=bucketLocation)['Contents']
 
@@ -21,11 +22,14 @@ def job():
                 os.makedirs(s3_object)
 
 def heartbeat():
-    print "[HEARTBEAT] Heartbeat Log entry."
+    logging.info("[HEARTBEAT] Heartbeat Log entry.")
 
 
 schedule.every(5).minutes.do(job)
 schedule.every(1).minutes.do(heartbeat)
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+
+
 
 while 1:
     schedule.run_pending()

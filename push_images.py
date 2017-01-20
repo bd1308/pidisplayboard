@@ -5,6 +5,9 @@ import boto3
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import schedule
 import time
+import logging
+
+
 
 
 urllist = open("url_list", 'r')
@@ -27,22 +30,24 @@ def job():
 
         driver = webdriver.Firefox(profile)
 
-        print "getting " + url
+        logging.info("getting " + url)
         driver.get(url)
 
         filename = storagelocation+name+".png"
         if driver.save_screenshot(filename):
-            print "save success"
+            logging.info("save success")
         driver.quit()
         #s3 magic
         s3 = boto3.resource('s3')
         data = open(filename, 'rb')
         s3.Bucket(s3bucket_name).put_object(Key=name+'.png', Body=data)
 def heartbeat():
-    print "[HEARTBEAT] Heartbeat Log Entry"
+     logging.info("[HEARTBEAT] Heartbeat Log Entry")
 
 schedule.every(1).minutes.do(heartbeat)
 schedule.every(5).minutes.do(job)
+logging.basicConfig(format='%(asctime)s %(message)s',level=logging.INFO)
+
 
 while 1:
     schedule.run_pending()
