@@ -1,6 +1,9 @@
 from selenium import webdriver
+from selenium.webdriver.common.alert import Alert
+from selenium.webdriver.support.wait import WebDriverWait
 from xvfbwrapper import Xvfb
 import boto3
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
 
@@ -15,6 +18,16 @@ for line in urllist:
     display = Xvfb(width=1920,height=1200)
     display.start()
     browser=webdriver.Firefox()
+
+    capabilities = DesiredCapabilities.FIREFOX
+    capabilities['marionette'] = True
+    capabilities['acceptSslCerts'] = True
+
+    profile = webdriver.FirefoxProfile()
+    profile.accept_untrusted_certs = True
+    profile.set_preference('network.http.phishy-userpass-length', 255)
+
+
     browser.get(url)
     filename = storagelocation+name+".png"
     if browser.save_screenshot(filename):
