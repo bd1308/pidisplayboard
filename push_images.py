@@ -27,22 +27,10 @@ for line in urllist:
     profile.accept_untrusted_certs = True
     profile.set_preference('network.http.phishy-userpass-length', 255)
 
-    driver = webdriver.Firefox()
+    driver = webdriver.Firefox(profile)
 
     print "getting " + url
     driver.get(url)
-    authRequired = False
-    if auth_index.isdigit():
-        authRequired = True
-    if authRequired:
-        try:
-            authline = authlist[int(auth_index)].split('|')
-            username = authline[0]
-            password = authline[1]
-            alert = driver.switch_to.alert.authenticate(username,password)
-        except NoAlertPresentException:
-            print('No Auth popup found.')
-
 
     filename = storagelocation+name+".png"
     if driver.save_screenshot(filename):
