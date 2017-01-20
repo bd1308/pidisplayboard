@@ -7,13 +7,15 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
 urllist = open("url_list", 'r')
+authlist = open("auth_list", 'r').read().split('\n')
 storagelocation = "/tmp/"
 s3bucket_name = 'home-displayboard'
 
 for line in urllist:
     splitline = line.split('|')
     url = splitline[0]
-    name = splitline[1].rstrip('\n')
+    name = splitline[1]
+    auth_index = splitline[2].rstrip('\n')
     display = Xvfb(width=1920,height=1200)
     display.start()
 
@@ -29,10 +31,17 @@ for line in urllist:
 
     print "getting " + url
     driver.get(url)
-    try:
-        alert = driver.switch_to.alert.accept()
-    except NoAlertPresentException:
-        print('No Phishing Warning Popup')
+    authRequired = False
+    if auth_index.isdigit():
+        authRequired = True
+    if authRequired:
+        try:
+            authline = authlist[int(auth_index)].split('|')
+            username = authline[0]
+            password = authline[1]
+            alert = driver.switch_to.alert.authenticate(username,password)
+        except NoAlertPresentException:
+            print('No Auth popup found.')
 
 
     filename = storagelocation+name+".png"
