@@ -3,41 +3,48 @@ from selenium.common.exceptions import NoAlertPresentException
 from xvfbwrapper import Xvfb
 import boto3
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-
+import schedule
+import time
 
 
 urllist = open("url_list", 'r')
-authlist = open("auth_list", 'r').read().split('\n')
 storagelocation = "/tmp/"
 s3bucket_name = 'home-displayboard'
 
-for line in urllist:
-    splitline = line.split('|')
-    url = splitline[0]
-    name = splitline[1]
-    auth_index = splitline[2].rstrip('\n')
-    display = Xvfb(width=1920,height=1200)
-    display.start()
 
-    capabilities = DesiredCapabilities.FIREFOX
-    capabilities['marionette'] = True
-    capabilities['acceptSslCerts'] = True
 
-    profile = webdriver.FirefoxProfile()
-    profile.accept_untrusted_certs = True
-    profile.set_preference('network.http.phishy-userpass-length', 255)
+def job():
+    for line in urllist:
+        splitline = line.split('|')
+        url = splitline[0]
+        name = splitline[1].rstrip('\n')
+        display = Xvfb(width=1920,height=1200)
+        display.start()
 
-    driver = webdriver.Firefox(profile)
+        profile = webdriver.FirefoxProfile()
+        profile.accept_untrusted_certs = True
+        profile.set_preference('network.http.phishy-userpass-length', 255)
 
-    print "getting " + url
-    driver.get(url)
+        driver = webdriver.Firefox(profile)
 
-    filename = storagelocation+name+".png"
-    if driver.save_screenshot(filename):
-        print "save success"
-    driver.quit()
-    #s3 magic
-    s3 = boto3.resource('s3')
-    data = open(filename, 'rb')
-    s3.Bucket(s3bucket_name).put_object(Key=name+'.png', Body=data)
+        print "getting " + url
+        driver.get(url)
+
+        filename = storagelocation+name+".png"
+        if driver.save_screenshot(filename):
+            print "save success"
+        driver.quit()
+        #s3 magic
+        s3 = boto3.resource('s3')
+        data = open(filename, 'rb')
+        s3.Bucket(s3bucket_name).put_object(Key=name+'.png', Body=data)
+def heartbeat():
+    print "[HEARTBEAT] Heartbeat Log Entry"
+
+schedule.every(1).minutes.do(heartbeat)
+schedule.every(5).minutes.do(job)
+
+while 1:
+    schedule.run_pending()
+    time.sleep(5)
 

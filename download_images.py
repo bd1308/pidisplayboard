@@ -24,7 +24,7 @@ def heartbeat():
     print "[HEARTBEAT] Heartbeat Log entry."
 
 
-schedule.every(10).minutes.do(job)
+schedule.every(5).minutes.do(job)
 schedule.every(1).minutes.do(heartbeat)
 
 while 1:
