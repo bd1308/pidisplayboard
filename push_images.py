@@ -30,8 +30,7 @@ for line in urllist:
     print "getting " + url
     driver.get(url)
     try:
-        alert = driver.switch_to.alert()
-        alert.accept()
+        alert = driver.switch_to.alert.accept()
     except NoAlertPresentException:
         print('No Phishing Warning Popup')
 
