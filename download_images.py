@@ -20,14 +20,16 @@ def job():
             if not os.path_exists(s3_object):
                 os.makedirs(s3_object)
 
+def heartbeat():
+    print "[HEARTBEAT] Heartbeat Log entry."
 
 
 schedule.every(10).minutes.do(job)
+schedule.every(1).minutes.do(heartbeat)
 
 while 1:
-    print "Idle loop."
     schedule.run_pending()
-    time.sleep(1)
+    time.sleep(5)
 
 
 
