@@ -21,7 +21,7 @@ def job():
             import os
             if not os.path_exists(s3_object):
                 os.makedirs(s3_object)
-logging.info("[JOB] AWS Pi Download Job completed")
+    logging.info("[JOB] AWS Pi Download Job completed")
 
 def heartbeat():
     logging.info("[HEARTBEAT] Heartbeat Log entry.")
