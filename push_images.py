@@ -43,6 +43,9 @@ def job():
         s3 = boto3.resource('s3')
         data = open(filename, 'rb')
         s3.Bucket(s3bucket_name).put_object(Key=name+'.png', Body=data)
+logging.info("AWS Push Job Completed.")
+
+
 def heartbeat():
      logging.info("[HEARTBEAT] Heartbeat Log Entry")
 
