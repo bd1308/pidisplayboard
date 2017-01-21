@@ -1,8 +1,6 @@
 from selenium import webdriver
-from selenium.common.exceptions import NoAlertPresentException
 from xvfbwrapper import Xvfb
 import boto3
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import schedule
 import time
 import logging
@@ -10,7 +8,7 @@ import logging
 
 
 
-urllist = open("url_list", 'r')
+
 storagelocation = "/tmp/"
 s3bucket_name = 'home-displayboard'
 
@@ -18,6 +16,7 @@ logging.basicConfig(format='%(asctime)s %(message)s',level=logging.INFO)
 
 
 def job():
+    urllist = open("url_list", 'r')
     logging.info("Push AWS Job Started.")
     for line in urllist:
         splitline = line.split('|')
@@ -43,6 +42,7 @@ def job():
         s3 = boto3.resource('s3')
         data = open(filename, 'rb')
         s3.Bucket(s3bucket_name).put_object(Key=name+'.png', Body=data)
+    urllist.close()
     logging.info("AWS Push Job Completed.")
 
 
