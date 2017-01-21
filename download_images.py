@@ -2,9 +2,10 @@ import boto3
 import schedule
 import time
 import logging
+
 bucketLocation = 'home-displayboard'
 fileLocation = '/tmp/'
-
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
 
 def job():
@@ -24,10 +25,10 @@ def job():
 def heartbeat():
     logging.info("[HEARTBEAT] Heartbeat Log entry.")
 
-
+logging.info("Starting Pull S3 Job.")
 schedule.every(5).minutes.do(job)
 schedule.every(1).minutes.do(heartbeat)
-logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+
 
 
 

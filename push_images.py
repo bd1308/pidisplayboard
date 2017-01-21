@@ -14,9 +14,11 @@ urllist = open("url_list", 'r')
 storagelocation = "/tmp/"
 s3bucket_name = 'home-displayboard'
 
+logging.basicConfig(format='%(asctime)s %(message)s',level=logging.INFO)
 
 
 def job():
+    logging.info("Push AWS Job Started.")
     for line in urllist:
         splitline = line.split('|')
         url = splitline[0]
@@ -44,9 +46,11 @@ def job():
 def heartbeat():
      logging.info("[HEARTBEAT] Heartbeat Log Entry")
 
+logging.info("Running Job at Startup.")
+job()
 schedule.every(1).minutes.do(heartbeat)
 schedule.every(5).minutes.do(job)
-logging.basicConfig(format='%(asctime)s %(message)s',level=logging.INFO)
+
 
 
 while 1:
