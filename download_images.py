@@ -71,8 +71,14 @@ scope = pyscope()
 while 1:
     schedule.run_pending()
     time.sleep(1)
+    scope.screen.fill(0,0,0)
+    scope.screen.update()
     filelist = open('file_list.txt', 'rb')
     for item in filelist:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
         itemarray = item.split('|')
         name = itemarray[0]
         filename = itemarray[1].rstrip('\n')
