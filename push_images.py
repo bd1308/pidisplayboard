@@ -7,14 +7,10 @@ import schedule
 import time
 import logging
 
-
-
-
-urllist = open("url_list", 'r')
-storagelocation = "/tmp/"
+urllist = open('url_list','r')
+storagelocation = '/tmp/'
 s3bucket_name = 'home-displayboard'
-
-
+filelist = list()
 
 def job():
     for line in urllist:
@@ -36,11 +32,35 @@ def job():
         filename = storagelocation+name+".png"
         if driver.save_screenshot(filename):
             logging.info("save success")
+            filelist.append(name+'|'+filename)
         driver.quit()
         #s3 magic
+        uploadFailed = False
+        try:
+            s3 = boto3.resource('s3')
+            data = open(filename, 'rb')
+            s3.Bucket(s3bucket_name).put_object(Key=name+'.png', Body=data)
+        except:
+            logging.error("Upload of " + filename + " failed.")
+            uploadFailed
+
+        if  not uploadFailed:
+            filelist.append(name + '|' + filename)
+
+    with open('file_list','w') as f:
+        for line in filelist:
+            f.write(line+'\n')
+
+    try:
         s3 = boto3.resource('s3')
-        data = open(filename, 'rb')
-        s3.Bucket(s3bucket_name).put_object(Key=name+'.png', Body=data)
+        data = open('file_list', 'rb')
+        s3.Bucket(s3bucket_name).put_object(Key='file_list.txt', Body=data)
+    except:
+        logging.error("Upload of file_list failed!")
+
+
+
+
 def heartbeat():
      logging.info("[HEARTBEAT] Heartbeat Log Entry")
 

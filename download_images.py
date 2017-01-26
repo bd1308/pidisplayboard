@@ -1,9 +1,44 @@
 import boto3
 import schedule
+import os
+import pygame
 import time
 import logging
+
+
 bucketLocation = 'home-displayboard'
 fileLocation = '/tmp/'
+
+
+#Based on code from Adafruit's Framebuffer Python tutorial, but slimmed down
+class pyscope:
+    screen = None
+
+    def __init__(self):
+        drivers = ['fbcon', 'directfb', 'svgalib']
+        found = False
+        for driver in drivers:
+            if not os.getenv('SDL_VIDEODRIVER'):
+                os.putenv('SDL_VIDEODRIVER', driver)
+            try:
+                pygame.display.init()
+            except pygame.error:
+                print 'Driver: {0} failed.'.format(driver)
+                continue
+            found = True
+            break
+        if not found:
+            raise Exception('No suitable driver found!')
+
+        size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
+        print "Framebuffer size: %d x %d" % (size[0], size[1])
+        self.screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
+        # Clear the screen to start
+        self.screen.fill((0, 0, 0))
+        # Initialise font support
+        pygame.font.init()
+        # Render the screen
+        pygame.display.update()
 
 
 
