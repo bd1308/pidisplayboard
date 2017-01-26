@@ -8,7 +8,7 @@ import logging
 urllist = open('url_list','r')
 storagelocation = '/tmp/'
 s3bucket_name = 'home-displayboard'
-filelist = list()
+
 
 logging.basicConfig(format='%(asctime)s %(message)s',level=logging.INFO)
 
@@ -16,6 +16,7 @@ logging.basicConfig(format='%(asctime)s %(message)s',level=logging.INFO)
 
 def job():
     urllist = open("url_list", 'r')
+    filelist = list()
     logging.info("Push AWS Job Started.")
     for line in urllist:
         splitline = line.split('|')
@@ -49,7 +50,7 @@ def job():
             uploadFailed = True
 
         if  not uploadFailed:
-            filelist.append(name + '|' + filename)
+            filelist.append(name + '|' + name+'.png')
 
     with open('file_list','w') as f:
         for line in filelist:

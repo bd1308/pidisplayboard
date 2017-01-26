@@ -65,16 +65,22 @@ schedule.every(5).minutes.do(job)
 schedule.every(1).minutes.do(heartbeat)
 scope = pyscope()
 
-with open('')
-
-
-
 
 
 
 while 1:
     schedule.run_pending()
     time.sleep(1)
+    filelist = open('file_list.txt', 'rb')
+    for item in filelist:
+        itemarray = item.split('|')
+        name = itemarray[0]
+        filename = itemarray[1].rstrip('\n')
+        img = pygame.image.load(filename)
+        scope.screen.blit(img, (0, 0))
+        pygame.display.update()
+        time.sleep(5)
+    filelist.close()
 
 
 
