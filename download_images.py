@@ -5,10 +5,9 @@ import pygame
 import time
 import logging
 
-
 bucketLocation = 'home-displayboard'
 fileLocation = '/tmp/'
-
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
 #Based on code from Adafruit's Framebuffer Python tutorial, but slimmed down
 class pyscope:
@@ -55,14 +54,16 @@ def job():
             import os
             if not os.path_exists(s3_object):
                 os.makedirs(s3_object)
+    logging.info("[JOB] AWS Pi Download Job completed")
 
 def heartbeat():
     logging.info("[HEARTBEAT] Heartbeat Log entry.")
 
-
+logging.info("Starting Pull S3 Job.")
+job()
 schedule.every(5).minutes.do(job)
 schedule.every(1).minutes.do(heartbeat)
-logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+
 
 
 
