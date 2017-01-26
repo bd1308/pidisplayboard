@@ -71,7 +71,7 @@ scope = pyscope()
 while 1:
     schedule.run_pending()
     time.sleep(1)
-    filelist = open('file_list.txt', 'rb')
+    filelist = open(fileLocation + 'file_list.txt', 'r')
     for item in filelist:
         itemarray = item.split('|')
         name = itemarray[0]
