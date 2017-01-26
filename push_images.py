@@ -37,7 +37,6 @@ def job():
         filename = storagelocation+name+".png"
         if driver.save_screenshot(filename):
             logging.info("save success")
-            filelist.append(name+'|'+filename)
         driver.quit()
         #s3 magic
         uploadFailed = False
@@ -50,7 +49,8 @@ def job():
             uploadFailed = True
 
         if  not uploadFailed:
-            filelist.append(name + '|' + name+'.png')
+            filelist.append(name + '|' + storagelocation + name+'.png')
+
 
     with open('file_list','w') as f:
         for line in filelist:
@@ -58,7 +58,7 @@ def job():
 
     try:
         s3 = boto3.resource('s3')
-        data = open('file_list', 'rb')
+        data = open('file_list', 'r')
         s3.Bucket(s3bucket_name).put_object(Key='file_list.txt', Body=data)
     except:
         logging.error("CANNOT UPLOAD FILE LIST!")
