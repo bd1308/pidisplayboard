@@ -63,6 +63,11 @@ logging.info("Starting Pull S3 Job.")
 job()
 schedule.every(5).minutes.do(job)
 schedule.every(1).minutes.do(heartbeat)
+scope = pyscope()
+
+with open('')
+
+
 
 
 

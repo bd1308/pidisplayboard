@@ -55,6 +55,13 @@ def job():
         for line in filelist:
             f.write(line+'\n')
 
+    try:
+        s3 = boto3.resource('s3')
+        data = open('file_list', 'rb')
+        s3.Bucket(s3bucket_name).put_object(Key='file_list.txt', Body=data)
+    except:
+        logging.error("CANNOT UPLOAD FILE LIST!")
+
     urllist.close()
     logging.info("AWS Push Job Completed.")
 
