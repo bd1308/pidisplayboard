@@ -83,7 +83,11 @@ while 1:
         name = itemarray[0]
         filename = itemarray[1].rstrip('\n')
         img = pygame.image.load(filename)
+        font = pygame.font.SysFont('Arial', 14, bold=True)
+        desc = font.render(name, True, pygame.Color(FONT_FG_COLOR), 
+                pygame.Color(FONT_BG_COLOR))
         scope.screen.blit(img, (0, 0))
+        scope.screen.blit(desc, 0, scope.screen.get_height())
         pygame.display.update()
         time.sleep(5)
     filelist.close()
