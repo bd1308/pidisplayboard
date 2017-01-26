@@ -104,7 +104,7 @@ while running:
         scope.screen.blit(img, (0, 0))
         scope.screen.blit(desc, (0, scope.screen.get_height()))
         pygame.display.update()
-        time.sleep(8)
+        time.sleep(10)
     filelist.close()
 pygame.quit()
 
