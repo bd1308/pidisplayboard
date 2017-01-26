@@ -73,7 +73,7 @@ while 1:
     time.sleep(1)
     scope.screen.fill(0,0,0)
     scope.screen.update()
-    filelist = open('file_list.txt', 'rb')
+    filelist = open(fileLocation + 'file_list.txt', 'r')
     for item in filelist:
         for event in pygame.event.get():
             if event.type == QUIT:
