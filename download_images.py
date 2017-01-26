@@ -4,6 +4,8 @@ import os
 import pygame
 import time
 import logging
+import sys
+
 
 bucketLocation = 'home-displayboard'
 fileLocation = '/tmp/'
@@ -38,7 +40,9 @@ class pyscope:
         pygame.font.init()
         # Render the screen
         pygame.display.update()
-
+	
+	def __del__(self):
+	    "Destructor"
 
 
 def job():
@@ -66,28 +70,36 @@ schedule.every(1).minutes.do(heartbeat)
 scope = pyscope()
 
 
+running = True
 
-
-while 1:
+while running:
     schedule.run_pending()
     time.sleep(1)
-    scope.screen.fill(0,0,0)
-    scope.screen.update()
     filelist = open(fileLocation + 'file_list.txt', 'r')
     for item in filelist:
         for event in pygame.event.get():
-            if event.type == QUIT:
+            if event.type == pygame.QUIT:
+                running = False
                 pygame.quit()
                 sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+                    running = False
+        scope.screen.fill((0, 0, 0))
+        pygame.display.update()
         itemarray = item.split('|')
         name = itemarray[0]
         filename = itemarray[1].rstrip('\n')
-        img = pygame.image.load(filename)
+	file = open(filename,'r')
+        img = pygame.image.load(file)
+	file.close()
         scope.screen.blit(img, (0, 0))
         pygame.display.update()
         time.sleep(5)
     filelist.close()
-
+pygame.quit()
 
 
 
