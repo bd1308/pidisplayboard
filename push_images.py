@@ -22,7 +22,7 @@ def job():
         splitline = line.split('|')
         url = splitline[0]
         name = splitline[1].rstrip('\n')
-        display = Xvfb(width=1920,height=1200)
+        display = Xvfb(width=1680,height=1050)
         display.start()
 
         profile = webdriver.FirefoxProfile()
@@ -30,6 +30,7 @@ def job():
         profile.set_preference('network.http.phishy-userpass-length', 255)
 
         driver = webdriver.Firefox(profile)
+        driver.set_window_size(1680,1050)
 
         logging.info("getting " + url)
         driver.get(url)
