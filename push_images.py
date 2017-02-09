@@ -39,6 +39,7 @@ def job():
         if driver.save_screenshot(filename):
             logging.info("save success")
         driver.quit()
+        display.stop()
         #s3 magic
         uploadFailed = False
         try:
