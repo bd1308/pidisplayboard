@@ -7,7 +7,7 @@ import logging
 import sys
 
 
-bucketLocation = 'home-displayboard'
+bucketLocation = 'royall-displayboard'
 fileLocation = '/tmp/'
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
