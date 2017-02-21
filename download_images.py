@@ -42,8 +42,8 @@ class pyscope:
         pygame.display.update()
         pygame.mouse.set_visible(False)
 	
-	def __del__(self):
-	    "Destructor"
+    def __del__(self):
+        "Destructor"
 
 
 def job():
