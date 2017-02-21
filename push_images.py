@@ -7,7 +7,7 @@ import logging
 
 urllist = open('url_list','r')
 storagelocation = '/tmp/'
-s3bucket_name = 'home-displayboard'
+s3bucket_name = 'royall-pidisplayboard'
 
 
 logging.basicConfig(format='%(asctime)s %(message)s',level=logging.INFO)
