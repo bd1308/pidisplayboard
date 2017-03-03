@@ -5,13 +5,18 @@ import pygame
 import time
 import logging
 import sys
+import ConfigParser
 
+config = ConfigParser.ConfigParser()
+config.read("config.ini")
+bucketLocation = config.get('main', 'aws_bucket_name')
+fileLocation = config.get('main', 'tmp_file_location')
+if config.get('main','log_level') == 'INFO':
+    logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+else:
+    logging.basicConfig(format='%(asctime)s %(message)s', level=logging.WARNING)
 
-bucketLocation = 'royall-pidisplayboard'
-fileLocation = '/tmp/'
-logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
-
-#Based on code from Adafruit's Framebuffer Python tutorial, but slimmed down
+# Based on code from Adafruit's Framebuffer Python tutorial, but slimmed down
 class pyscope:
     screen = None
 
@@ -41,33 +46,75 @@ class pyscope:
         # Render the screen
         pygame.display.update()
         pygame.mouse.set_visible(False)
-	
+
     def __del__(self):
         "Destructor"
 
 
 def job():
-    logging.info("[JOB] Running AWS Pi Image Download Job...")
-    s3 = boto3.client('s3')
-    list = s3.list_objects(Bucket=bucketLocation)['Contents']
+    try:
+        logging.info("[JOB] Running AWS Pi Image Download Job...")
+        s3 = boto3.client(
+            's3',
+            aws_access_key_id=config.get('main', 'aws_access_id'),
+            aws_secret_access_key=config.get('main', 'aws_secret_key')
+        )
+        list = s3.list_objects(Bucket=bucketLocation)['Contents']
 
-    for s3_key in list:
-        s3_object = s3_key['Key']
-        if not s3_object.endswith("/"):
-            s3.download_file(bucketLocation, s3_object, fileLocation+s3_object)
-        else:
-            import os
-            if not os.path_exists(s3_object):
-                os.makedirs(s3_object)
+        for s3_key in list:
+            s3_object = s3_key['Key']
+            if not s3_object.endswith("/"):
+                s3.download_file(bucketLocation, s3_object, fileLocation + s3_object)
+            else:
+                import os
+                if not os.path_exists(s3_object):
+                    os.makedirs(s3_object)
+    except:
+        logging.warning("[JOB] CANNOT DOWNLOAD IMAGES! Will try next time.")
     logging.info("[JOB] AWS Pi Download Job completed")
+
 
 def heartbeat():
     logging.info("[HEARTBEAT] Heartbeat Log entry.")
 
+def prep_update_image(filelist_iter):
+    try:
+        item = next(filelist_iter)
+    except StopIteration:
+        filelist_iter = iter(filelist)
+        item = next(filelist_iter)
+    update_image(item)
+
+
+def update_image(file_item):
+    logging.info("[UPDATE_IMAGE] Updating slideshow image")
+    scope.screen.fill((0, 0, 0))
+    pygame.display.update()
+    itemarray = file_item.split('|')
+    name = itemarray[0]
+    filename = itemarray[1].rstrip('\n')
+    font = pygame.font.SysFont('Arial', 14, bold=True)
+    desc = font.render(name, True, pygame.Color(255, 255, 255),
+                       pygame.Color('white'))
+    file_data = open(filename, 'r')
+    img = pygame.image.load(file_data)
+    file_data.close()
+    print 'name:' + name
+    print scope.screen.get_height()
+    scope.screen.blit(img, (0, 0))
+    scope.screen.blit(desc, (0, scope.screen.get_height()-20))
+    pygame.display.update()
+    time.sleep(10)
+
+
+
 logging.info("Starting Pull S3 Job.")
 job()
+filelist = open(fileLocation + 'file_list.txt', 'r')
+filelist_iter = iter(filelist)
 schedule.every(5).minutes.do(job)
 schedule.every(1).minutes.do(heartbeat)
+schedule.every(config.getint('slideshow', 'slideshow_update_interval')).seconds.do(prep_update_image(filelist_iter))
 scope = pyscope()
 
 
@@ -76,41 +123,15 @@ running = True
 while running:
     schedule.run_pending()
     time.sleep(1)
-    filelist = open(fileLocation + 'file_list.txt', 'r')
-    for item in filelist:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+            pygame.quit()
+            sys.exit()
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
                 pygame.quit()
+                filelist.close()
                 sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
-                    running = False
-        scope.screen.fill((0, 0, 0))
-        pygame.display.update()
-        itemarray = item.split('|')
-        name = itemarray[0]
-        filename = itemarray[1].rstrip('\n')
-        img = pygame.image.load(filename)
-        font = pygame.font.SysFont('Arial', 14, bold=True)
-        desc = font.render(name, True, pygame.Color(255,255,255), 
-                pygame.Color('white'))
-	file = open(filename,'r')
-        img = pygame.image.load(file)
-	file.close()
-	print 'name:'+name
-	print scope.screen.get_height()
-        scope.screen.blit(img, (0, 0))
-        scope.screen.blit(desc, (0, scope.screen.get_height()))
-        pygame.display.update()
-        time.sleep(10)
-    filelist.close()
+filelist.close()
 pygame.quit()
-
-
-
-
-
-

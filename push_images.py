@@ -4,13 +4,17 @@ import boto3
 import schedule
 import time
 import logging
+import ConfigParser
 
 urllist = open('url_list','r')
-storagelocation = '/tmp/'
-s3bucket_name = 'royall-pidisplayboard'
-
-
-logging.basicConfig(format='%(asctime)s %(message)s',level=logging.INFO)
+config = ConfigParser.ConfigParser()
+config.read("config.ini")
+bucketLocation = config.get('main', 'aws_bucket_name')
+storagelocation = config.get('main', 'tmp_file_location')
+if config.get('main','log_level') == 'INFO':
+    logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+else:
+    logging.basicConfig(format='%(asctime)s %(message)s', level=logging.WARNING)
 
 
 
@@ -18,6 +22,11 @@ def job():
     urllist = open("url_list", 'r')
     filelist = list()
     logging.info("Push AWS Job Started.")
+    client = boto3.client(
+        's3',
+        aws_access_key_id=config.get('main', 'aws_access_id'),
+        aws_secret_access_key=config.get('main', 'aws_secret_key')
+    )
     for line in urllist:
         splitline = line.split('|')
         url = splitline[0]
@@ -43,9 +52,8 @@ def job():
         #s3 magic
         uploadFailed = False
         try:
-            s3 = boto3.resource('s3')
             data = open(filename, 'rb')
-            s3.Bucket(s3bucket_name).put_object(Key=name+'.png', Body=data)
+            put_file(client, bucketLocation, name+'.png', data)
         except:
             logging.error("Upload of " + filename + " failed.")
             uploadFailed = True
@@ -59,9 +67,8 @@ def job():
             f.write(line+'\n')
 
     try:
-        s3 = boto3.resource('s3')
         data = open('file_list', 'r')
-        s3.Bucket(s3bucket_name).put_object(Key='file_list.txt', Body=data)
+        put_file(client, bucketLocation, 'file_list.txt', data)
     except:
         logging.error("CANNOT UPLOAD FILE LIST!")
 
@@ -71,6 +78,10 @@ def job():
 
 def heartbeat():
      logging.info("[HEARTBEAT] Heartbeat Log Entry")
+
+def put_file(client, bucket, name, contents):
+    logging.info("Putting file into S3: bucket="+bucket+ "name="+name)
+    client.put_object(Bucket=bucket, Key=name, Body=contents)
 
 logging.info("Running Job at Startup.")
 job()
