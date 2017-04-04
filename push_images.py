@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from xvfbwrapper import Xvfb
 import boto3
 import schedule
@@ -43,6 +45,9 @@ def job():
 
         logging.info("getting " + url)
         driver.get(url)
+        delay = config.getint('main', 'wait_timeout')
+        WebDriverWait(driver, delay)
+
 
         filename = storagelocation+name+".png"
         if driver.save_screenshot(filename):
