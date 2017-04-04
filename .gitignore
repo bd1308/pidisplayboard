@@ -1,2 +1,5 @@
 config.ini
 url_list
+.idea/
+file_list
+*.log

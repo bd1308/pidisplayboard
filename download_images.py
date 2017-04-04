@@ -77,8 +77,9 @@ def job():
 def heartbeat():
     logging.info("[HEARTBEAT] Heartbeat Log entry.")
 
-def prep_update_image(filelist_iter):
+def prep_update_image():
     try:
+        global filelist_iter
         item = next(filelist_iter)
     except StopIteration:
         filelist_iter = iter(filelist)
@@ -109,13 +110,14 @@ def update_image(file_item):
 
 
 logging.info("Starting Pull S3 Job.")
+scope = pyscope()
 job()
 filelist = open(fileLocation + 'file_list.txt', 'r')
 filelist_iter = iter(filelist)
 schedule.every(5).minutes.do(job)
 schedule.every(1).minutes.do(heartbeat)
-schedule.every(config.getint('slideshow', 'slideshow_update_interval')).seconds.do(prep_update_image(filelist_iter))
-scope = pyscope()
+schedule.every(config.getint('slideshow', 'slideshow_update_interval')).seconds.do(prep_update_image)
+
 
 
 running = True
