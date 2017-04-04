@@ -78,12 +78,13 @@ def heartbeat():
     logging.info("[HEARTBEAT] Heartbeat Log entry.")
 
 def prep_update_image():
+    global filelist
     try:
-        global filelist_iter
-        item = next(filelist_iter)
+        item = next(filelist)
     except StopIteration:
-        filelist_iter = iter(filelist)
-        item = next(filelist_iter)
+        print "caught exception...resetting"
+        filelist.seek(0)
+        item = next(filelist)
     update_image(item)
 
 
@@ -96,16 +97,17 @@ def update_image(file_item):
     filename = itemarray[1].rstrip('\n')
     font = pygame.font.SysFont('Arial', 14, bold=True)
     desc = font.render(name, True, pygame.Color(255, 255, 255),
-                       pygame.Color('white'))
+                       pygame.Color('blue'))
     file_data = open(filename, 'r')
     img = pygame.image.load(file_data)
+    img = pygame.transform.scale(img, (scope.screen.get_width(),scope.screen.get_height()))
     file_data.close()
     print 'name:' + name
     print scope.screen.get_height()
+    print scope.screen.get_width()
     scope.screen.blit(img, (0, 0))
     scope.screen.blit(desc, (0, scope.screen.get_height()-20))
     pygame.display.update()
-    time.sleep(10)
 
 
 
@@ -114,6 +116,7 @@ scope = pyscope()
 job()
 filelist = open(fileLocation + 'file_list.txt', 'r')
 filelist_iter = iter(filelist)
+prep_update_image()
 schedule.every(5).minutes.do(job)
 schedule.every(1).minutes.do(heartbeat)
 schedule.every(config.getint('slideshow', 'slideshow_update_interval')).seconds.do(prep_update_image)
