@@ -4,6 +4,15 @@
 * url_list - list of URLs and titles/descriptions ( | delimited)
 
 # Configuration
+Create a file called `url_list` in your working directory.
+This file will have a format like the following:
+```
+http://www.google.com|Google
+http://www.hackaday.com|Hackaday
+```
+
+
+
 Create a file called `config.ini` in your working (current) directory.
 This file should contain this information: 
 ```
