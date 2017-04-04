@@ -22,6 +22,7 @@ aws_secret_key: AWS_SECRET_KEY
 aws_bucket_name: bucket_name
 log_level: INFO
 tmp_file_location: /tmp/
+wait_timeout: 3
 
 [slideshow]
 slideshow_update_interval: 20
