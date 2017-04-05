@@ -3,7 +3,7 @@
 * download_images.py - Downloads files from S3 location, and displays them in a pygame slideshow
 * url_list - list of URLs and titles/descriptions ( | delimited)
 
-# Configuration
+## Configuration
 Create a file called `url_list` in your working directory.
 This file will have a format like the following:
 ```
@@ -30,3 +30,13 @@ use_fullscreen: True
 ```
 
 These options will be used by the two programs to load properties. 
+
+
+## Installation for Client 
+pip install -r requirements.txt
+
+There are some packages required for deployment/running. One of these is Xvfb, and thus requires the client to be ran via sudo, as directfb seems to require root for proper access. I've managed to finally get pip to build pygame, but it's much easier to install pygame from your repository as well. 
+
+## Installation for Server
+pip install -r requirements.txt
+
