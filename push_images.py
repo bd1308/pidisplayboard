@@ -8,7 +8,6 @@ import time
 import logging
 import ConfigParser
 
-urllist = open('url_list','r')
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
 bucketLocation = config.get('main', 'aws_bucket_name')
@@ -95,7 +94,7 @@ schedule.every(5).minutes.do(job)
 
 
 
-while 1:
+while True:
     schedule.run_pending()
-    time.sleep(1)
+    time.sleep(10)
 
