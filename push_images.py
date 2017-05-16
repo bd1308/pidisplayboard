@@ -58,6 +58,7 @@ def job():
         try:
             data = open(filename, 'rb')
             put_file(client, bucketLocation, name+'.png', data)
+	    data.close()
         except:
             logging.error("Upload of " + filename + " failed.")
             uploadFailed = True
@@ -73,6 +74,7 @@ def job():
     try:
         data = open('file_list', 'r')
         put_file(client, bucketLocation, 'file_list.txt', data)
+ 	data.close()
     except:
         logging.error("CANNOT UPLOAD FILE LIST!")
 
