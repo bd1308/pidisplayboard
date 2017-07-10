@@ -91,12 +91,12 @@ def put_file(client, bucket, name, contents):
 
 logging.info("Running Job at Startup.")
 job()
-schedule.every(1).minutes.do(heartbeat)
-schedule.every(5).minutes.do(job)
 
+if config.getboolean('main','run_always'):
+    schedule.every(1).minutes.do(heartbeat)
+    schedule.every(5).minutes.do(job)
 
-
-while True:
-    schedule.run_pending()
-    time.sleep(10)
+    while True:
+        schedule.run_pending()
+        time.sleep(10)
 
