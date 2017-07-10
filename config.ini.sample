@@ -5,6 +5,8 @@ aws_bucket_name: bucket_name
 log_level: INFO
 tmp_file_location: /tmp/
 wait_timeout: 3
+run_always: False
+resize_images: True
 
 [slideshow]
 slideshow_update_interval: 20

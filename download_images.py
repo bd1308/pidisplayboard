@@ -95,12 +95,13 @@ def update_image(file_item):
     itemarray = file_item.split('|')
     name = itemarray[0]
     filename = itemarray[1].rstrip('\n')
-    font = pygame.font.SysFont('Arial', 14, bold=True)
+    font = pygame.font.SysFont('Arial', 21, bold=True)
     desc = font.render(name, True, pygame.Color(255, 255, 255),
                        pygame.Color('blue'))
     file_data = open(filename, 'r')
     img = pygame.image.load(file_data)
-    img = pygame.transform.scale(img, (scope.screen.get_width(),scope.screen.get_height()))
+    if config.getboolean('main','resize_images'):
+        img = pygame.transform.scale(img, (scope.screen.get_width(),scope.screen.get_height()))
     file_data.close()
     print 'name:' + name
     print scope.screen.get_height()
