@@ -34,6 +34,13 @@ def gather_images():
     urllist = open("url_list", 'r')
     filedict = dict()
 
+
+    profile = webdriver.FirefoxProfile()
+    profile.accept_untrusted_certs = True
+    profile.set_preference('network.http.phishy-userpass-length', 255)
+    profile.set_preference('webdriver.load.strategy', 'unstable')
+
+
     # Iterate through url_list to capture screenshots and save file
     for line in urllist:
         splitline = line.split('|')
@@ -41,11 +48,6 @@ def gather_images():
         name = splitline[1].rstrip('\n')
         #display = Xvfb(width=1680,height=1050)
         #display.start()
-
-        #profile = webdriver.FirefoxProfile()
-        #profile.accept_untrusted_certs = True
-        #profile.set_preference('network.http.phishy-userpass-length', 255)
-        #profile.set_preference('webdriver.load.strategy', 'unstable')
 
         #driver = webdriver.Firefox(profile)
         #driver.set_window_size(1680,1050)
@@ -106,7 +108,7 @@ def post_images(filedict):
 
     try:
         data = open('file_list', 'r')
-        put_file(client, bucketLocation, 'file_list_test.txt', data)
+        put_file(client, bucketLocation, 'file_list.txt', data)
         data.close()
     except:
         logging.error("CANNOT UPLOAD FILE LIST!")
