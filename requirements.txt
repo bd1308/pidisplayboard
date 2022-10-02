@@ -6,7 +6,7 @@ futures
 jmespath
 python-dateutil
 s3transfer
-selenium
+selenium<3.8
 six
 wheel
 xvfbwrapper

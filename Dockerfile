@@ -8,7 +8,7 @@ COPY config.ini /pidisplayboard/
 COPY push_images.py /pidisplayboard/
 COPY url_list /pidisplayboard/
 COPY requirements.txt /pidisplayboard/
-RUN pip install -r requirements.txt #versions again
+RUN pip install -r requirements.txt #old selenium too
 RUN pip uninstall -y boto3 && pip install 'boto3<1.10'
 ADD https://github.com/mozilla/geckodriver/releases/download/v0.18.0/geckodriver-v0.18.0-linux64.tar.gz /opt/
 ADD https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 /opt/
