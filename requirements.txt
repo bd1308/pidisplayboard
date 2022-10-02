@@ -10,4 +10,4 @@ selenium
 six
 wheel
 xvfbwrapper
-ConfigParser
+ConfigParser<4.0.0
