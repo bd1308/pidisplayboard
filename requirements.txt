@@ -1,5 +1,5 @@
-schedule
-boto3
+schedule<1.0
+boto3<1.10
 botocore
 docutils
 futures
