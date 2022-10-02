@@ -1,4 +1,4 @@
-schedule
+schedule<1.0
 boto3
 botocore
 docutils
@@ -10,4 +10,4 @@ selenium
 six
 wheel
 xvfbwrapper
-ConfigParser
+ConfigParser<4.0.0
